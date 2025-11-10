@@ -10,22 +10,28 @@ function criarCardContato(contato) {
     cardContato.classList.add('card-contato')
     cardContato.id = 'card-contato'
 
+    const imagemReserva = '../img/erro.webp'
     let img = contato.foto
     if (img == null || img == undefined || img.includes('semFoto')) {
         img = '../img/avatar1.avif'
     }
-    img.onerror = function(){
-        this.src = '../img/avatar1.avif'
-    }
+
 
     const fotoPerfil = document.createElement('img')
+    fotoPerfil.onerror = function () {
+        this.src = imagemReserva
+    }
     fotoPerfil.src = img
 
     const nomeContato = document.createElement('h2')
     nomeContato.textContent = contato.nome
+    if (contato.nome == null || contato.nome == '')
+        nomeContato.textContent = "usuario sem nome"
 
     const numeroContato = document.createElement('p')
     numeroContato.textContent = contato.celular
+    if (contato.celular == null || contato.celular == '')
+        numeroContato.textContent = "usuario sem telefone"
 
     cardContato.appendChild(fotoPerfil)
     cardContato.appendChild(nomeContato)
@@ -64,12 +70,8 @@ async function criarNovoContato(contato) {
 
 async function atualizarCard() {
 
-    const cardContato = document.querySelectorAll('.card-contato')
-
-    cardContato.forEach(card =>{
-       const cardEscolhido =  card.target('.card-contato')
-       console.log(cardEscolhido)
-    })
+    const cardContato = document.getElementById('card-contato')
+    console.log(cardContato)
 
 }
 
@@ -117,8 +119,8 @@ cancelar.addEventListener('click', () => {
     main.classList.replace('form-show', 'card-show')
 })
 
-atualizarCard()
 popularContatos()
+atualizarCard()
 
 
 
