@@ -113,48 +113,48 @@ async function carregarDadosContato(cardEscolhido) {
 }
 
 function prepararFormularioParaNovoContato() {
-    
-    const formulario = document.getElementById('formulario')
-    
-    
-    formulario.dataset.id = ''
-    
-    
-    formulario.reset() 
 
-    
+    const formulario = document.getElementById('formulario')
+
+
+    formulario.dataset.id = ''
+
+
+    formulario.reset()
+
+
     document.getElementById('preview-image').src = './img/preview-icon.png'
     document.getElementById('foto').value = null
 
-    
+
     document.getElementById('nome').readOnly = false
     document.getElementById('email').readOnly = false
     document.getElementById('celular').readOnly = false
     document.getElementById('endereco').readOnly = false
     document.getElementById('cidade').readOnly = false
 
-    
+
     const main = document.querySelector('main')
     main.classList.replace('card-show', 'form-show')
 }
 
 function lerDadosDoFormulario() {
-    
+
     const nome = document.getElementById('nome').value
     const email = document.getElementById('email').value
 
-    
+
     if (nome == '' || email == '') {
         alert('Campos obrigatórios (Nome e E-mail) não preenchidos')
         return null
     }
 
-    
+
     const celular = document.getElementById('celular').value
     const endereco = document.getElementById('endereco').value
     const cidade = document.getElementById('cidade').value
 
-    
+
     const contato = {
         nome: nome,
         email: email,
@@ -163,26 +163,30 @@ function lerDadosDoFormulario() {
         cidade: cidade,
         foto: '../img/avatar1.avif'
     }
-    
+
     return contato
 }
 
 function limparEFecharFormulario() {
     const formulario = document.getElementById('formulario')
-    
-    
+
+
     formulario.reset()
-    
-    
+
+
     formulario.dataset.id = ''
-    
-    
+
+
     document.getElementById('preview-image').src = './img/preview-icon.png'
     document.getElementById('foto').value = null
 
-    
+
     const main = document.querySelector('main')
     main.classList.replace('form-show', 'card-show')
+}
+
+async function excluirContato(idContato) {
+
 }
 
 const cadastrarContato = document.getElementById('novo-contato')
@@ -201,24 +205,24 @@ salvar.addEventListener('click', async () => {
 
     const formulario = document.getElementById('formulario')
     const idEdicao = formulario.dataset.id
-    
-    
+
+
     const contato = lerDadosDoFormulario()
-    
-    
+
+
     if (contato === null) return
 
-    
+
     if (idEdicao) {
         await atualizarContato(idEdicao, contato)
     } else {
         await criarContato(contato)
     }
-    
-    
+
+
     limparEFecharFormulario()
 
-    
+
     await popularContatos()
 })
 
@@ -229,12 +233,30 @@ cancelar.addEventListener('click', limparEFecharFormulario)
 
 const editar = document.getElementById('editar')
 editar.addEventListener('click', () => {
-    
+
     document.getElementById('nome').readOnly = false
     document.getElementById('email').readOnly = false
     document.getElementById('celular').readOnly = false
     document.getElementById('endereco').readOnly = false
     document.getElementById('cidade').readOnly = false
+})
+
+const deletar = document.getElementById('deletar')
+deletar.addEventListener('click', async () => {
+   
+    const formulario = document.getElementById('formulario')
+    const idEdicao = formulario.dataset.id
+
+    if (idEdicao) {
+        await deletarContato(idEdicao)
+    } else {
+        alert('Nenhum contato selecionado para deletar.')
+    }
+
+    limparEFecharFormulario()
+
+    await popularContatos()
+
 })
 
 popularContatos()
