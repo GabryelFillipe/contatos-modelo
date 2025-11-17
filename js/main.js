@@ -138,7 +138,7 @@ function prepararFormularioParaNovoContato() {
     main.classList.replace('card-show', 'form-show')
 }
 
-function lerDadosDoFormulario() {
+function lerDadosDoFormulario(fotoContato) {
 
     const nome = document.getElementById('nome').value
     const email = document.getElementById('email').value
@@ -153,7 +153,7 @@ function lerDadosDoFormulario() {
     const celular = document.getElementById('celular').value
     const endereco = document.getElementById('endereco').value
     const cidade = document.getElementById('cidade').value
-    const foto = document.getElementById('foto').value
+    
 
 
     const contato = {
@@ -162,7 +162,7 @@ function lerDadosDoFormulario() {
         celular: celular,
         endereco: endereco,
         cidade: cidade,
-        foto: foto
+        foto: fotoContato
     }
 
     return contato
@@ -309,7 +309,9 @@ inputFoto.addEventListener('change', function (event) {
     const fotoPreview = document.getElementById('preview-image')
     fotoPreview.src = URL.createObjectURL(foto)
 
+    url = URL.createObjectURL(foto)
 
+    lerContatos(url)
 })
 
 popularContatos()
