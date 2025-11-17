@@ -15,20 +15,20 @@ function criarCardContato(contato) {
 
     const imagemReserva = '../img/erro.webp'
     let img = contato.foto
-    if (img == null || img == undefined || img.includes('semFoto')) {
-        img = '../img/avatar1.avif'
-    }
+    // if (img == null || img == undefined || img.includes('semFoto')) {
+    //     img = '../img/avatar1.avif'
+    // }
 
     const fotoPerfil = document.createElement('img')
-    fotoPerfil.onerror = function () {
-        this.src = imagemReserva
-    }
+    // fotoPerfil.onerror = function () {
+    //     this.src = imagemReserva
+    // }
     fotoPerfil.src = img
 
-    const idContato = document.createElement('h2')
-    idContato.textContent = contato.nome
+    const nomeContato = document.createElement('h2')
+    nomeContato.textContent = contato.nome
     if (contato.nome == null || contato.nome == '')
-        idContato.textContent = "usuario sem nome"
+        nomeContato.textContent = "usuario sem nome"
 
     const numeroContato = document.createElement('p')
     numeroContato.textContent = contato.celular
@@ -36,7 +36,7 @@ function criarCardContato(contato) {
         numeroContato.textContent = "usuario sem telefone"
 
     cardContato.appendChild(fotoPerfil)
-    cardContato.appendChild(idContato)
+    cardContato.appendChild(nomeContato)
     cardContato.appendChild(numeroContato)
 
     return cardContato
@@ -59,16 +59,13 @@ function preencherFormulario(contato) {
 
     document.getElementById('formulario').dataset.id = contato.id
 
-    const fotoPreview = document.getElementById('preview-image')
-    if (contato.foto) {
-        fotoPreview.src = contato.foto
-    } else {
-        fotoPreview.src = './img/preview-icon.png'
-    }
+    const inputFoto = document.getElementById('foto')
 
-    const idContato = document.getElementById('nome')
-    idContato.value = contato.nome || ''
-    idContato.readOnly = true
+    const fotoPreview = document.getElementById('preview-image')
+
+    const nomeContato = document.getElementById('nome')
+    nomeContato.value = contato.nome || ''
+    nomeContato.readOnly = true
 
     const emailContato = document.getElementById('email')
     emailContato.value = contato.email || ''
@@ -92,15 +89,13 @@ function preencherFormulario(contato) {
 
 async function carregarDadosContato(cardEscolhido) {
 
-    const idContato = cardEscolhido.dataset.id
+    const nomeContato = cardEscolhido.dataset.id
     const listaContatos = await lerContatos()
-    console.log(listaContatos)
     const infoContato = listaContatos.find(contato => {
-        return contato.id === Number(idContato)
+        return contato.id === Number(nomeContato)
     })
-    console.log(infoContato)
 
-    
+
 
     if (infoContato) {
         let contato = {
@@ -112,9 +107,9 @@ async function carregarDadosContato(cardEscolhido) {
             cidade: infoContato.cidade
         }
         preencherFormulario(contato)
-    } else{
+    } else {
         alert('ERRO: CONTATO NÃO ENCONTRADO NA LISTA')
-    } 
+    }
 }
 
 function prepararFormularioParaNovoContato() {
@@ -158,6 +153,7 @@ function lerDadosDoFormulario() {
     const celular = document.getElementById('celular').value
     const endereco = document.getElementById('endereco').value
     const cidade = document.getElementById('cidade').value
+    const foto = document.getElementById('foto').value
 
 
     const contato = {
@@ -166,7 +162,7 @@ function lerDadosDoFormulario() {
         celular: celular,
         endereco: endereco,
         cidade: cidade,
-        foto: '../img/avatar1.avif'
+        foto: foto
     }
 
     return contato
@@ -190,6 +186,32 @@ function limparEFecharFormulario() {
     main.classList.replace('form-show', 'card-show')
 }
 
+async function buscarContato(nomeContato) {
+
+    const listaContatos = await lerContatos()
+
+    let contatoEscolhido = listaContatos.find(contato => {
+        return contato.nome === nomeContato
+    })
+
+    if (contatoEscolhido == undefined || contatoEscolhido == null || contatoEscolhido == '') {
+        alert('sfsad')
+    } else {
+        carregarContatoFiltrado(contatoEscolhido)
+    }
+
+    return contatoEscolhido
+}
+
+async function carregarContatoFiltrado(contato) {
+
+    const containerContatos = document.getElementById('container')
+    containerContatos.replaceChildren()
+
+    const cardContato = criarCardContato(contato)
+    containerContatos.appendChild(cardContato)
+
+}
 
 const cadastrarContato = document.getElementById('novo-contato')
 cadastrarContato.addEventListener('click', prepararFormularioParaNovoContato)
@@ -245,7 +267,7 @@ editar.addEventListener('click', () => {
 
 const deletar = document.getElementById('deletar')
 deletar.addEventListener('click', async () => {
-   
+
     const formulario = document.getElementById('formulario')
     const idEdicao = formulario.dataset.id
 
@@ -258,6 +280,35 @@ deletar.addEventListener('click', async () => {
     limparEFecharFormulario()
 
     await popularContatos()
+
+})
+
+const inputCotato = document.getElementById('pesquisar')
+
+inputCotato.addEventListener('keydown', buscarBotão)
+async function buscarBotão(event) {
+
+    if (event.key === 'Enter') {
+
+        event.preventDefault()
+        let nomeContato = inputCotato.value
+        if (nomeContato == '' || nomeContato == null || nomeContato == undefined) {
+            await popularContatos()
+        } else {
+            buscarContato(nomeContato)
+        }
+    }
+
+}
+
+const inputFoto = document.getElementById('foto')
+inputFoto.addEventListener('change', function (event) {
+
+    const foto = event.target.files[0]
+
+    const fotoPreview = document.getElementById('preview-image')
+    fotoPreview.src = URL.createObjectURL(foto)
+
 
 })
 
