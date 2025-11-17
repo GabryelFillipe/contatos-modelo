@@ -10,6 +10,8 @@ function criarCardContato(contato) {
     const cardContato = document.createElement('div')
     cardContato.classList.add('card-contato')
     cardContato.id = contato.nome
+    cardContato.dataset.id = contato.id
+
 
     const imagemReserva = '../img/erro.webp'
     let img = contato.foto
@@ -23,10 +25,10 @@ function criarCardContato(contato) {
     }
     fotoPerfil.src = img
 
-    const nomeContato = document.createElement('h2')
-    nomeContato.textContent = contato.nome
+    const idContato = document.createElement('h2')
+    idContato.textContent = contato.nome
     if (contato.nome == null || contato.nome == '')
-        nomeContato.textContent = "usuario sem nome"
+        idContato.textContent = "usuario sem nome"
 
     const numeroContato = document.createElement('p')
     numeroContato.textContent = contato.celular
@@ -34,7 +36,7 @@ function criarCardContato(contato) {
         numeroContato.textContent = "usuario sem telefone"
 
     cardContato.appendChild(fotoPerfil)
-    cardContato.appendChild(nomeContato)
+    cardContato.appendChild(idContato)
     cardContato.appendChild(numeroContato)
 
     return cardContato
@@ -64,9 +66,9 @@ function preencherFormulario(contato) {
         fotoPreview.src = './img/preview-icon.png'
     }
 
-    const nomeContato = document.getElementById('nome')
-    nomeContato.value = contato.nome || ''
-    nomeContato.readOnly = true
+    const idContato = document.getElementById('nome')
+    idContato.value = contato.nome || ''
+    idContato.readOnly = true
 
     const emailContato = document.getElementById('email')
     emailContato.value = contato.email || ''
@@ -90,12 +92,15 @@ function preencherFormulario(contato) {
 
 async function carregarDadosContato(cardEscolhido) {
 
-    const nomeContato = cardEscolhido.id
+    const idContato = cardEscolhido.dataset.id
     const listaContatos = await lerContatos()
-
+    console.log(listaContatos)
     const infoContato = listaContatos.find(contato => {
-        return contato.nome === nomeContato
+        return contato.id === Number(idContato)
     })
+    console.log(infoContato)
+
+    
 
     if (infoContato) {
         let contato = {
@@ -107,9 +112,9 @@ async function carregarDadosContato(cardEscolhido) {
             cidade: infoContato.cidade
         }
         preencherFormulario(contato)
-    } else {
+    } else{
         alert('ERRO: CONTATO NÃO ENCONTRADO NA LISTA')
-    }
+    } 
 }
 
 function prepararFormularioParaNovoContato() {
@@ -185,9 +190,6 @@ function limparEFecharFormulario() {
     main.classList.replace('form-show', 'card-show')
 }
 
-async function excluirContato(idContato) {
-
-}
 
 const cadastrarContato = document.getElementById('novo-contato')
 cadastrarContato.addEventListener('click', prepararFormularioParaNovoContato)
